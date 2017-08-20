@@ -17,12 +17,15 @@ CS=0
 
 echo " Scaning \"$1\" for \"$3\" ROMs and adding to \"$5$4\"... "
 
-for fullpath in $1; do
+for dir in `find $1 -type d`; do
+for fullpath in $dir/*.scummvm; do
 touch "$5$4"
-filename=$(basename "$fullpath")
-rom_folder="/storage/roms/nas/"$(basename $(dirname "$fullpath"))/$filename
 
-if [ `cat "$5$4" | grep -c "$filename"` -lt 1 ] && [ "${filename%.*}" != "gamelist"  ]; then
+
+filename=$(basename "$fullpath")
+rom_folder="/storage/roms/nas/scummvm"/$(basename $(dirname "$fullpath"))/$filename
+
+if [ `cat "$5$4" | grep -c "$filename"` -lt 1 ] && [ "${filename%.*}" != "gamelist"  ] && [ "${filename%.*}" != "*"  ]; then
 	CA=$(($CA+1))
 	echo "$CA - Adding $filename"
 	#echo $fullpath >> "$5$4"
@@ -36,6 +39,7 @@ else
 	CS=$(($CS+1))
 	echo "$CS - Skipping $4"
 fi
+done
 done
 
 echo " Added $CA and skipped $CS \"$3\" ROMs out of $(($CA+$CS)) scanned files to \"$4\" "
